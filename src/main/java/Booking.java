@@ -4,6 +4,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.*;
@@ -18,7 +19,7 @@ public class Booking implements Scrapper{
 
     @Override
     public String getData() throws IOException {
-        String url = "https://www.booking.com/hotel/es/" + name  + ".es.html?aid=397594&label=gog235jc-1FCAEoggI46AdIM1gDaEaIAQGYAQq4ARfIAQzYAQHoAQH4AQyIAgGoAgO4Asixtp0GwAIB0gIkY2YzNTM3MWQtNzMwYy00ZGQzLTg4MTUtOTEwYmQ1OTVmNWQz2AIG4AIB&sid=bb5d8c13c097423d59be2bc511229144&dest_id=-388528;dest_type=city;dist=0;group_adults=2;group_children=0;hapos=1;hpos=1;nflt=class%3D5;no_rooms=1;req_adults=2;req_children=0;room1=A%2CA;sb_price_type=total;sr_order=popularity;srepoch=1672321092;srpvid=5f626080a1990037;type=total;ucfs=1&#hotelTmpl";
+        String url = "https://www.booking.com/hotel/es/" + name + ".es.html";
         Document doc = Jsoup.connect(url).get();
 
         //CalidadUbicación
@@ -76,8 +77,52 @@ public class Booking implements Scrapper{
 
         String jsonServicios = gson.toJson(mapServicios);
 
+       //Comentarios clientes;
+        String urlReviews = "https://www.booking.com/reviewlist.es.html?cc1=es;dist=1;pagename=" + name + ";type=total&&offset=0;rows=10";
+        Document docReviews = Jsoup.connect(urlReviews).get();
+        Elements usuarios = docReviews.select("span.bui-avatar-block__title");
+        Elements países = docReviews.select("span.bui-avatar-block__subtitle");
+        Elements habitaciones =  docReviews.select("a.c-review-block__room-link");
+        Elements bloqueReviews = docReviews.select("div.c-review");
+        Elements fechas = docReviews.select("ul.bui-list.bui-list--text.bui-list--icon.bui_font_caption.c-review-block__row.c-review-block__stay-date");
+        Elements notas = docReviews.select("div.bui-review-score__badge");
+        Elements titulosReview = docReviews.select("h3.c-review-block__title.c-review__title--ltr  ");
+        Elements fechaComentarios = docReviews.select("span.c-review-block__date");
+        Elements compañías = docReviews.select("div.bui-list__body");
 
-        return jsonServicios;
+        String reviewPosText = "";
+        String reviewNegText = "";
+        List<List<String>> reviewsContent = new ArrayList<>();
+        List<Comentario> comentarios = new ArrayList<>();
+        for(int i = 0; i < usuarios.size(); i++) {
+
+            try {
+                Element reviewPos = bloqueReviews.get(i).select("span.c-review__prefix.c-review__prefix--color-green").first().select("span.c-review__body").first();
+                reviewPosText = reviewPos.text();
+            }
+            catch (Exception e){
+
+            }
+
+            try {
+                Element reviewNeg = bloqueReviews.get(i).select("span.c-review__prefix").first().select("span.c-review__body").first();
+                reviewNegText = reviewNeg.text();
+            }
+            catch (Exception e){
+
+            }
+
+
+
+            String noche = List.of(fechas.get(i).text().split("·")).get(0);
+            String fechaEstancia = List.of(fechas.get(i).text().split("·")).get(1);
+
+            Comentario comentario = new Comentario(usuarios.get(i).text(), países.get(i).text(), habitaciones.get(i).text(), fechaEstancia, noche,compañías.get(i).text(), Double.parseDouble(notas.get(i).text().replace(",",".")), titulosReview.get(i).text(), fechaComentarios.get(i).text(), reviewPosText, reviewNegText);
+            comentarios.add(comentario);
+        }
+
+        String jsonComentario = gson.toJson(comentarios);
+        return jsonComentario;
     }
 
     //Dirección -
