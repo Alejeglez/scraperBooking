@@ -22,10 +22,21 @@ public class ApiBooking implements WebService{
         get("/hotels/:name/services", ((request, response) -> getHotelServices(request, response)));
         get("/hotels/:name/comments", ((request, response) -> getHotelComments(request, response)));
         get("/hotels/:name/ratings", ((request, response) -> getHotelRatings(request, response)));
+        get("/:name/hotels", ((request, response) -> getHotels(request, response)));
     }
 
-    private String getHotelRatings(Request request, Response response) {
-        return null;
+    private Object getHotels(Request request, Response response) throws IOException {
+        response.header("content-type", "application/json");
+        name = request.params("name");
+        json = controller.getHotels(name);
+        return json;
+    }
+
+    private String getHotelRatings(Request request, Response response) throws IOException {
+        response.header("content-type", "application/json");
+        name = request.params("name");
+        json = controller.getRatings(name);
+        return json;
     }
 
     private String getHotelComments(Request request, Response response) throws IOException {
@@ -43,13 +54,13 @@ public class ApiBooking implements WebService{
         return json;
     }
 
-    private String getHotelUbi(Request request, Response response) throws InterruptedException, IOException {
+    private String getHotelUbi(Request request, Response response) throws IOException {
         response.header("content-type", "application/json");
         name = request.params("name");
         json = controller.getUbi(name);
         return json;
-
     }
+
 
 
 

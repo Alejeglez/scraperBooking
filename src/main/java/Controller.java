@@ -30,4 +30,14 @@ public class Controller {
         booking = new Booking(name);
         return booking.getComments();
     }
+
+    public String getRatings(String name) throws IOException {
+        booking = new Booking(name);
+        return booking.getRatings();
+    }
+
+    public String getHotels(String name) throws IOException {
+        booking = new Booking(name);
+        return booking.getHotels();
+    }
 }
