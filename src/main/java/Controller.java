@@ -9,7 +9,7 @@ public class Controller {
         apiBooking = new ApiBooking(this);
     }
 
-    public void run() throws IOException, InterruptedException {
+    public void run(){
 
         ApiBooking apiBooking = new ApiBooking(this);
         apiBooking.launch();
