@@ -6,7 +6,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.*;
 
-public class Booking implements Scrapper {
+public class Booking implements Scraper {
 
     private String url;
     private String urlReviews;
@@ -41,7 +41,7 @@ public class Booking implements Scrapper {
         for (Element servicio : listServicios) {
             String title = servicio.select("div.bui-title__text.hotel-facilities-group__title-text").text();
             try {
-                serviciosExtendidos = new ArrayList<>(List.of(servicio.select("ul.bui-list.bui-list--text.bui-list--icon.hotel-facilities-group__list").text().split(" (?=\\p{Upper})[De]*", 0)));
+                serviciosExtendidos = new ArrayList<>(List.of(servicio.select("ul.bui-list.bui-list--text.bui-list--icon.hotel-facilities-group__list").text().split(" (?=\\p{Upper})", 0)));
 
             } catch (Exception e) {
 
@@ -98,7 +98,7 @@ public class Booking implements Scrapper {
         Elements usuarios = docReviews.select("span.bui-avatar-block__title");
         Elements países = docReviews.select("span.bui-avatar-block__subtitle");
         Elements habitaciones = docReviews.select("a.c-review-block__room-link");
-        Elements bloqueReviews = docReviews.select("div.c-review");
+        Elements bloqueReviews = docReviews.select("div.c-review-block");
         Elements fechas = docReviews.select("ul.bui-list.bui-list--text.bui-list--icon.bui_font_caption.c-review-block__row.c-review-block__stay-date");
         Elements notas = docReviews.select("div.bui-review-score__badge");
         Elements titulosReview = docReviews.select("h3.c-review-block__title.c-review__title--ltr  ");

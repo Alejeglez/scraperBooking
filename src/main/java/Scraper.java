@@ -1,6 +1,6 @@
 import java.io.IOException;
 
-public interface Scrapper {
+public interface Scraper {
 
     String getUbi() throws IOException;
     String getHotels() throws IOException;
